@@ -1,0 +1,19 @@
+.navbar-form .form-control {
+    width: 120px;
+}
+
+#products .product-image {
+    max-width: 100%;
+    max-height: 200px;
+}
+#products .product-display {
+    height: 350px;
+}
+#products .product-display:hover button {
+    display: block;
+}
+#products .product-display button {
+    display: none;
+    position: absolute;
+    right: 15px;
+}

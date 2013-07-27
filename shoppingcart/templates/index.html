@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="products">
+    <div class="row">
+    {% for p in products %}
+        <div class="col-lg-4 text-center panel product-display">
+            <div class="panel-heading">
+                <h4>{{ p.name }} - ${{ p.price }}</h4>
+            </div>
+            <button type="button" class="btn btn-primary">Add to cart</button>
+            <img class="product-image" src="{{ p.image_url }}"/>
+            <div>{{ p.description }}</div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
