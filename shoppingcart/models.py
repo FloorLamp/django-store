@@ -8,23 +8,23 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     
     def __unicode__(self):
-        return self.product_name
+        return self.name
         
 
 class ShoppingCart(models.Model):
-    user_id = models.ForeignKey(User)
+    user = models.ForeignKey(User)
     product = models.ForeignKey(Product)
     count = models.IntegerField(default=1)
     date_added = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
-        return '{}, {} {}'.format(self.user_id.get_full_name(), self.count, self.product.name)
+        return '{}, {} {}'.format(self.user.get_full_name(), self.count, self.product.name)
         
 class Order(models.Model):
-    user_id = models.ForeignKey(User)
+    user = models.ForeignKey(User)
     product = models.ForeignKey(Product)
     count = models.IntegerField(default=1)
     date_ordered = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
-        return '{}, {} {}'.format(self.user_id.get_full_name(), self.count, self.product.name)
+        return '{}, {} {}'.format(self.user.get_full_name(), self.count, self.product.name)
