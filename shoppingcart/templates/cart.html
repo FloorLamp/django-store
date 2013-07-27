@@ -1,18 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="products">
-    <div class="row">
-    {% for p in products %}
-        <div class="col-lg-4 text-center panel product-display">
-            <div class="panel-heading">
-                <h4>{{ p.name }} - ${{ p.price }}</h4>
-            </div>
-            <button type="button" class="btn btn-primary" data-id="{{ p.id }}">Add to cart</button>
-            <img class="product-image" src="{{ p.image_url }}"/>
-            <div>{{ p.description }}</div>
+<div id="cart">
+    <div class="panel">
+        <div class="panel-heading">
+            <h3>Your Shopping Cart</h3>
         </div>
-    {% endfor %}
+        {% if products %}
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-7 col-offset-2">
+                        <h4>Product</h4>
+                    </div>
+                    <div class="col-lg-1">
+                        <h4>Count</h4>
+                    </div>
+                    <div class="col-lg-1">
+                        <h4>Price</h4>
+                    </div>
+                </div>
+            </li>
+            {% for p in products %}
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 text-center">
+                        <img class="product-image" src="{{ p.product.image_url }}"/>
+                    </div>
+                    <div class="col-lg-7">
+                        <h4>{{ p.product.name }}</h4>
+                        <p>{{ p.product.description }}</p>
+                    </div>
+                    <div class="col-lg-1">
+                        <input type="text" class="form-control count-input" value="{{ p.count }}" placeholder="Quantity" data-price="{{ p.product.price }}">
+                        <button class="btn btn-primary update-product" data-id="{{ p.product.id }}">Update</button>
+                    </div>
+                    <div class="col-lg-1 text-right">
+                        <h4>${{ p.product.price|floatformat:"2" }}</h4>
+                    </div>
+                    <div class="col-lg-1">
+                        <button class="btn btn-danger delete-product" data-id="{{ p.product.id }}">Delete</button>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="panel-footer">
+            <div class="col-lg-1 col-offset-9">
+                <h4>Total: </h4>
+            </div>
+            <div class="col-lg-1 text-right">
+                <h4>$<span id="total-price">{{ total_price }}</span></h4>
+            </div>
+        </div>
+        {% else %}
+        Your cart is empty.
+        {% endif %}
     </div>
 </div>
 {% endblock %}

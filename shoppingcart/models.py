@@ -23,7 +23,7 @@ class ShoppingCart(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User)
     product = models.ForeignKey(Product)
-    count = models.IntegerField(default=1)
+    count = models.IntegerField(default=0)
     date_ordered = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
