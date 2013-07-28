@@ -43,6 +43,7 @@
                     </div>
                 </div>
             </li>
+            {% endfor %}
             <li class="list-group-item order-footer">
                 <div class="col-lg-11 text-right">
                     <h4>Total:&nbsp;&nbsp;$<span id="total-price">{{ total_price|floatformat:"2" }}</span></h4>
@@ -53,7 +54,6 @@
                     </form>
                 </div>
             </li>
-            {% endfor %}
         </ul>
         {% else %}
         Your cart is empty.

@@ -5,6 +5,13 @@
 <div id="orders">
     {% for order in orders %}
         {% show_order order %}
+    {% empty %}
+    <div class="panel">
+        <div class="panel-heading">
+            <h3>Your Past Orders</h3>
+        </div>
+        You have not made any orders.
+    </div>
     {% endfor %}
 </div>
 {% endblock %}

@@ -4,8 +4,10 @@ import json
 from models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
+# from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -13,6 +15,23 @@ from django.template import RequestContext
 def home(request, template='index.html'):
     products = Product.objects.all()
     template_params = {'products': products}
+    return render_to_response(template, template_params, RequestContext(request))
+    
+def register(request, template='register.html'):
+    if request.user.is_authenticated():
+        return redirect('home')
+    template_params = {}
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = authenticate(username=request.POST['username'], password=request.POST['password1'])
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+        else:
+            template_params['errors'] = form.errors
+    
     return render_to_response(template, template_params, RequestContext(request))
     
 def login_view(request):
@@ -65,7 +84,7 @@ def checkout(request, template='checkout.html'):
     
 @login_required
 def orders(request, template='orders.html'):
-    orders = Order.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by('-date_ordered')
     template_params = {
         'orders': orders,
     }
