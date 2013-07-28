@@ -38,13 +38,14 @@ def register(request, template='register.html'):
     return render_to_response(template, template_params, RequestContext(request))
     
 def login_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        login(request, user)
-    else:
-        request.session['login_error'] = 'Invalid username or password'
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+        else:
+            request.session['login_error'] = 'Invalid username or password'
     
     return redirect('home')
         
@@ -96,53 +97,52 @@ def orders(request, template='orders.html'):
 @login_required
 def modify_cart(request):
     response = {}
-    if request.is_ajax() and request.method == 'POST':
-        if 'id' in request.POST and 'action' in request.POST:
-            action = request.POST['action']
+    if request.method == 'POST' and 'id' in request.POST and 'action' in request.POST:
+        action = request.POST['action']
+        try:
+            product = Product.objects.get(id=request.POST['id'])
+        except ObjectDoesNotExist:
+            response['status'] = 'product not found'
+            return HttpResponse(json.dumps(response), mimetype='application/json')
+            
+        if action == 'add':
+            if not product.change_quantity(-1):
+                response['status'] = 'product unavailable'
+                return HttpResponse(json.dumps(response), mimetype='application/json')
+            cart_product, created = ShoppingCart.objects.get_or_create(user=request.user, product=product)
+            cart_product.count += 1
+            cart_product.save()
+            response['status'] = 'ok'
+            response['product_quantity'] = Product.objects.get(id=request.POST['id']).quantity
+        elif action == 'delete':
             try:
-                product = Product.objects.get(id=request.POST['id'])
+                cart_product = ShoppingCart.objects.get(user=request.user, product=product)
+            except ObjectDoesNotExist:
+                response['status'] = 'product not in cart'
+                return HttpResponse(json.dumps(response), mimetype='application/json')
+                
+            product.change_quantity(cart_product.count)
+            cart_product.delete()
+            response['status'] = 'ok'
+        elif action == 'update' and 'count' in request.POST:
+            try:
+                cart_product = ShoppingCart.objects.get(user=request.user, product=product)
             except ObjectDoesNotExist:
                 response['status'] = 'product not found'
                 return HttpResponse(json.dumps(response), mimetype='application/json')
                 
-            if action == 'add':
-                if not product.change_quantity(-1):
-                    response['status'] = 'product unavailable'
-                    return HttpResponse(json.dumps(response), mimetype='application/json')
-                cart_product, created = ShoppingCart.objects.get_or_create(user=request.user, product=product)
-                cart_product.count += 1
+            try:
+                count = int(request.POST['count'])
+            except:
+                response['status'] = 'invalid count'
+                return HttpResponse(json.dumps(response), mimetype='application/json')
+            
+            if product.change_quantity(cart_product.count-count):
+                cart_product.count = count
                 cart_product.save()
                 response['status'] = 'ok'
-                response['product_quantity'] = Product.objects.get(id=request.POST['id']).quantity
-            elif action == 'delete':
-                try:
-                    cart_product = ShoppingCart.objects.get(user=request.user, product=product)
-                except ObjectDoesNotExist:
-                    response['status'] = 'product not in cart'
-                    return HttpResponse(json.dumps(response), mimetype='application/json')
-                    
-                product.change_quantity(cart_product.count)
-                cart_product.delete()
-                response['status'] = 'ok'
-            elif action == 'update' and 'count' in request.POST:
-                try:
-                    cart_product = ShoppingCart.objects.get(user=request.user, product=product)
-                except ObjectDoesNotExist:
-                    response['status'] = 'product not found'
-                    return HttpResponse(json.dumps(response), mimetype='application/json')
-                    
-                try:
-                    count = int(request.POST['count'])
-                except:
-                    response['status'] = 'invalid count'
-                    return HttpResponse(json.dumps(response), mimetype='application/json')
-                
-                if product.change_quantity(cart_product.count-count):
-                    cart_product.count = count
-                    cart_product.save()
-                    response['status'] = 'ok'
-                else:
-                    response['status'] = 'product unavailable'
+            else:
+                response['status'] = 'product unavailable'
             
     return HttpResponse(json.dumps(response, cls=JSONEncoder), mimetype='application/json')
 
