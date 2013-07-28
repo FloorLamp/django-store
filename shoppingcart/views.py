@@ -14,7 +14,11 @@ from django.template import RequestContext
 
 def home(request, template='index.html'):
     products = Product.objects.all()
-    template_params = {'products': products}
+    login_error = request.session.pop('login_error', None)
+    template_params = {
+        'products': products,
+        'login_error': login_error,
+    }
     return render_to_response(template, template_params, RequestContext(request))
     
 def register(request, template='register.html'):
@@ -41,7 +45,7 @@ def login_view(request):
     if user is not None:
         login(request, user)
     else:
-        pass
+        request.session['login_error'] = 'Invalid username or password'
     
     return redirect('home')
         
@@ -71,12 +75,12 @@ def checkout(request, template='checkout.html'):
                 order_product = OrderProduct(order=new_order, product=p.product, count=p.count)
                 order_product.save()
             cart_products.delete()
-        request.session['new_order'] = new_order
+            request.session['new_order'] = new_order
         return redirect('checkout')
     else:
         if 'new_order' in request.session:
             template_params = {
-                'new_order': request.session.get('new_order')
+                'new_order': request.session.pop('new_order')
             }
             return render_to_response(template, template_params, RequestContext(request))
         else:

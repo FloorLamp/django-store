@@ -4,6 +4,11 @@
 .navbar-form .form-control {
     width: 120px;
 }
+#login-error {
+    position: absolute;
+    margin-top: 45px;
+    z-index: 9;
+}
 
 #form-center {
     width: 50%;

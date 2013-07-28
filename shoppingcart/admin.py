@@ -20,13 +20,22 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         return obj.user.get_full_name()
     list_display = ('user_name', 'product', 'count', 'date_added')
     search_fields = ['user__first_name', 'user__last_name', 'product__name']
-    
+        
 class OrderAdmin(admin.ModelAdmin):
     def user_name(self, obj):
         return obj.user.get_full_name()
+    
+    def order_products(self, obj):
+        return '<br>'.join(['{} - {} - {}'.format(o.count, o.product.price, o.product.name) for o in obj.get_orders()])
+    order_products.allow_tags = True
+    
+    def order_total(self, obj):
+        return '${}'.format(obj.get_price())
+        
     list_display = ('user_name', 'id', 'date_ordered')
     search_fields = ['user__first_name', 'user__last_name']
-
+    readonly_fields = ('order_products', 'order_total')
+    
 # admin.site.unregister(Site)
 # admin.site.unregister(Group)
 admin.site.register(Product, ProductAdmin)

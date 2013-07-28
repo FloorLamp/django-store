@@ -72,10 +72,14 @@
           , $price = $('#total-price')
           , price = 0;
         
-        $counts.each(function() {
-            var $this = $(this);
-            price += parseInt($this.val()) * parseFloat($this.data('price'));
-        })
-        $price.text(price.toFixed(2));
+        if ($counts.length) {
+            $counts.each(function() {
+                var $this = $(this);
+                price += parseInt($this.val()) * parseFloat($this.data('price'));
+            })
+            $price.text(price.toFixed(2));
+        } else {
+            $('.list-group').after('Your cart is empty.').remove();
+        }
     }
 })();

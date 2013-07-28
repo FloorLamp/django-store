@@ -1,5 +1,8 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
+
+TWO_DECIMAL_PLACES = Decimal('1.00')
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
@@ -27,7 +30,7 @@ class Order(models.Model):
         return self.orderproduct_set.all()
         
     def get_price(self):
-        return sum([p.count * p.product.price for p in self.get_orders()])
+        return sum([p.count * p.product.price for p in self.get_orders()]).quantize(TWO_DECIMAL_PLACES)
     
     def __unicode__(self):
         return '{} order at {}'.format(self.user.get_full_name(), self.date_ordered)

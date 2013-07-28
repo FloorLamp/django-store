@@ -24,6 +24,12 @@
             </ul>            
             {% else %}
             <form action="{% url 'login_view' %}" method="post" class="navbar-form pull-right">{% csrf_token %}
+                {% if login_error %}
+                <div class="alert alert-danger" id="login-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ login_error }}
+                </div>
+                {% endif %}
                 <input type="text" class="form-control" placeholder="User name" name="username">
                 <input type="password" class="form-control" placeholder="Password" name="password">
                 <button type="submit" class="btn btn-primary">Login</button>
