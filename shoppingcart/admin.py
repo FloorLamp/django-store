@@ -11,7 +11,7 @@ class ProductAdmin(admin.ModelAdmin):
     product_pic.allow_tags = True
     product_pic.admin_order_field = 'image_url'
     
-    list_display = ('product_pic', 'id', 'name', 'price', 'description')
+    list_display = ('product_pic', 'id', 'name', 'quantity', 'price', 'description')
     list_display_links = ('name',)
     search_fields = ['product_id', 'name', 'product_description']
     

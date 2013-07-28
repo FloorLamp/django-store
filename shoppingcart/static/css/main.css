@@ -32,15 +32,19 @@
 #products .product-display {
     height: 350px;
 }
-#products .addable:hover button {
+#products .addable:hover .btn-primary {
     display: block;
 }
-#products .product-display button {
+#products .product-display .btn-primary {
     display: none;
     position: absolute;
     right: 15px;
 }
-
+#products .update-error {
+    position: absolute;
+    display: none;
+    right: 15px;
+}
 
 #cart .list-group,
 .order .list-group {
@@ -53,6 +57,13 @@
 #cart .update-product {
     margin-top: 15px;
     display: none;
+}
+#cart .update-error {
+    position: absolute;
+    display: none;
+    width: 205px;
+    margin-top: 50px;
+    right: 15px;
 }
 .order .product-image {
     max-width: 100%;

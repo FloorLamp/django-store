@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import models
+from django.db.models import F
 from django.contrib.auth.models import User
 
 TWO_DECIMAL_PLACES = Decimal('1.00')
@@ -7,8 +8,21 @@ TWO_DECIMAL_PLACES = Decimal('1.00')
 class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=15, decimal_places=2)
+    quantity = models.IntegerField()
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
+    
+    def in_stock(self):
+        return self.quantity > 0
+    
+    # use F object to change quantity atomically. Returns true if ok, false if negative quantity
+    def change_quantity(self, count):
+        if self.quantity + count < 0:
+            return False
+        else:
+            self.quantity = F('quantity') + count
+            self.save()
+            return True
     
     def __unicode__(self):
         return self.name

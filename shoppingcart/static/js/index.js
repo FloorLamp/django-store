@@ -11,13 +11,21 @@
                 csrfmiddlewaretoken: csrftoken
             }
         }).then(function(data) {
-            $added.find('img').attr('src', $this.data('image'));
-            $added.find('p').text($this.data('name'));
-            $added.fadeIn(function() {
-                setTimeout(function() {
-                    $added.fadeOut();
-                }, 3000);
-            });
+            if (data.status == 'ok') {
+                $this.siblings('.panel-heading').find('.in-stock').text(data.product_quantity);
+                $added.find('img').attr('src', $this.data('image'));
+                $added.find('p').text($this.data('name'));
+                $added.fadeIn(function() {
+                    setTimeout(function() {
+                        $added.fadeOut();
+                    }, 3000);
+                });
+                if (data.product_quantity == 0) $this.parents('.addable').removeClass('addable');                    
+            } else {
+                $this.siblings('.panel-heading').find('.in-stock').text(0);
+                $this.after('<div class="alert alert-danger update-error">This item is out of stock.<button type="button" class="close" data-dismiss="alert">&times;</button></div>').next().fadeIn();
+                $this.parents('.addable').removeClass('addable');
+            }
         });
     });
     
@@ -45,25 +53,34 @@
           , value = $this.val();
         if (/^[0-9]+$/.test(value) && parseInt(value) > 0) {
             $button.fadeIn();
+            $this.prev().fadeOut();
         } else {
             $button.fadeOut();
         }
     });
     
     $('#cart .update-product').on('click', function() {
-        var $this = $(this);
+        var $this = $(this)
+          , $input = $this.prev('input')
+          , newCount = $input.val();
         $.ajax({
             url: '/modify_cart',
             type: 'POST',
             data: {
                 id: $(this).data('id'),
                 action: 'update',
-                count: $this.prev('input').val(),
+                count: newCount,
                 csrfmiddlewaretoken: csrftoken
             }
         }).then(function(data) {
             $this.fadeOut();
-            updateTotal();
+            if (data.status == 'ok') {
+                updateTotal();
+                $input.attr('data-value', newCount);
+            } else {
+                $input.prev().fadeIn();
+                $input.val($input.attr('data-value'));
+            }
         });
     });
     

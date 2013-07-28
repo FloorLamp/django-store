@@ -32,7 +32,8 @@
                         <p>{{ p.product.description }}</p>
                     </div>
                     <div class="col-lg-1 text-right">
-                        <input type="text" class="form-control count-input" value="{{ p.count }}" placeholder="Quantity" data-price="{{ p.product.price }}">
+                        <div class="alert update-error">This item is out of stock.</div>
+                        <input type="text" class="form-control count-input" value="{{ p.count }}" data-value="{{ p.count }}" placeholder="Quantity" data-price="{{ p.product.price }}">
                         <button class="btn btn-primary update-product" data-id="{{ p.product.id }}">Update</button>
                     </div>
                     <div class="col-lg-1 text-right">

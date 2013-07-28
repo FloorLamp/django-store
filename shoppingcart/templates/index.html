@@ -15,9 +15,9 @@
     </div>
     <div class="row">
     {% for p in products %}
-        <div class="col-lg-4 text-center panel product-display {% if user.is_authenticated %}addable{% endif %}">
+        <div class="col-lg-4 text-center panel product-display {% if user.is_authenticated and p.in_stock %}addable{% endif %}">
             <div class="panel-heading">
-                <h4>{{ p.name }} - ${{ p.price|floatformat:"2" }}</h4>
+                <h4>{{ p.name }} - {% if p.in_stock %}<span class="in-stock">{{ p.quantity }}</span> in stock{% else %}out of stock{% endif %} - <b>${{ p.price|floatformat:"2" }}</b></h4>
             </div>
             <button type="button" class="btn btn-primary" data-id="{{ p.id }}" data-name="{{ p.name }}" data-image="{{ p.image_url }}">Add to cart</button>
             <img class="product-image" src="{{ p.image_url }}"/>

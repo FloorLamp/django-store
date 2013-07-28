@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
-# from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -105,15 +104,25 @@ def modify_cart(request):
             except ObjectDoesNotExist:
                 response['status'] = 'product not found'
                 return HttpResponse(json.dumps(response), mimetype='application/json')
-            
+                
             if action == 'add':
+                if not product.change_quantity(-1):
+                    response['status'] = 'product unavailable'
+                    return HttpResponse(json.dumps(response), mimetype='application/json')
                 cart_product, created = ShoppingCart.objects.get_or_create(user=request.user, product=product)
                 cart_product.count += 1
                 cart_product.save()
                 response['status'] = 'ok'
-                response['cart'] = list(ShoppingCart.objects.filter(user=request.user).values('product__name', 'product__image_url', 'product__price', 'count'))
+                response['product_quantity'] = Product.objects.get(id=request.POST['id']).quantity
             elif action == 'delete':
-                ShoppingCart.objects.filter(user=request.user, product=product).delete()
+                try:
+                    cart_product = ShoppingCart.objects.get(user=request.user, product=product)
+                except ObjectDoesNotExist:
+                    response['status'] = 'product not in cart'
+                    return HttpResponse(json.dumps(response), mimetype='application/json')
+                    
+                product.change_quantity(cart_product.count)
+                cart_product.delete()
                 response['status'] = 'ok'
             elif action == 'update' and 'count' in request.POST:
                 try:
@@ -127,9 +136,13 @@ def modify_cart(request):
                 except:
                     response['status'] = 'invalid count'
                     return HttpResponse(json.dumps(response), mimetype='application/json')
-                    
-                cart_product.count = count
-                cart_product.save()
+                
+                if product.change_quantity(cart_product.count-count):
+                    cart_product.count = count
+                    cart_product.save()
+                    response['status'] = 'ok'
+                else:
+                    response['status'] = 'product unavailable'
             
     return HttpResponse(json.dumps(response, cls=JSONEncoder), mimetype='application/json')
 
