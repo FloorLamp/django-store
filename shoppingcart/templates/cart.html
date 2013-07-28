@@ -13,10 +13,10 @@
                     <div class="col-lg-7 col-offset-2">
                         <h4>Product</h4>
                     </div>
-                    <div class="col-lg-1">
+                    <div class="col-lg-1 text-right">
                         <h4>Count</h4>
                     </div>
-                    <div class="col-lg-1">
+                    <div class="col-lg-1 text-right">
                         <h4>Price</h4>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                         <h4>{{ p.product.name }}</h4>
                         <p>{{ p.product.description }}</p>
                     </div>
-                    <div class="col-lg-1">
+                    <div class="col-lg-1 text-right">
                         <input type="text" class="form-control count-input" value="{{ p.count }}" placeholder="Quantity" data-price="{{ p.product.price }}">
                         <button class="btn btn-primary update-product" data-id="{{ p.product.id }}">Update</button>
                     </div>
@@ -43,16 +43,18 @@
                     </div>
                 </div>
             </li>
+            <li class="list-group-item order-footer">
+                <div class="col-lg-11 text-right">
+                    <h4>Total:&nbsp;&nbsp;$<span id="total-price">{{ total_price|floatformat:"2" }}</span></h4>
+                </div>
+                <div class="col-lg-1">
+                    <form method="post" action="{% url 'checkout' %}">{% csrf_token %}
+                        <button type="submit" class="btn btn-success">Checkout</button>
+                    </form>
+                </div>
+            </li>
             {% endfor %}
         </ul>
-        <div class="panel-footer">
-            <div class="col-lg-1 col-offset-9">
-                <h4>Total: </h4>
-            </div>
-            <div class="col-lg-1 text-right">
-                <h4>$<span id="total-price">{{ total_price }}</span></h4>
-            </div>
-        </div>
         {% else %}
         Your cart is empty.
         {% endif %}

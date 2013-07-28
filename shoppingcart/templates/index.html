@@ -3,13 +3,15 @@
 {% block content %}
 <div id="products">
     <div class="panel col-lg-3" id="added-product">
-        <div class="col-lg-4 text-center">
-            <img>
-        </div>
-        <div class="col-lg-8">
-            <b>Added:</b>
-            <p></p>
-        </div>
+        <a href="{% url 'cart' %}">
+            <div class="col-lg-4 text-center">
+                <img>
+            </div>
+            <div class="col-lg-8">
+                <b>Added:</b>
+                <p></p>
+            </div>
+        </a>
     </div>
     <div class="row">
     {% for p in products %}

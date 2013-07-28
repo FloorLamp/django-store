@@ -24,8 +24,8 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     def user_name(self, obj):
         return obj.user.get_full_name()
-    list_display = ('user_name', 'product', 'count', 'date_ordered')
-    search_fields = ['user__first_name', 'user__last_name', 'product__name']
+    list_display = ('user_name', 'id', 'date_ordered')
+    search_fields = ['user__first_name', 'user__last_name']
 
 # admin.site.unregister(Site)
 # admin.site.unregister(Group)

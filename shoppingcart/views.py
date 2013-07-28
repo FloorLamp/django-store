@@ -42,6 +42,36 @@ def cart(request, template='cart.html'):
     return render_to_response(template, template_params, RequestContext(request))
     
 @login_required
+def checkout(request, template='checkout.html'):
+    if request.method == 'POST':
+        cart_products = ShoppingCart.objects.filter(user=request.user)        
+        if cart_products:
+            new_order = Order(user=request.user)
+            new_order.save()
+            for p in cart_products:
+                order_product = OrderProduct(order=new_order, product=p.product, count=p.count)
+                order_product.save()
+            cart_products.delete()
+        request.session['new_order'] = new_order
+        return redirect('checkout')
+    else:
+        if 'new_order' in request.session:
+            template_params = {
+                'new_order': request.session.get('new_order')
+            }
+            return render_to_response(template, template_params, RequestContext(request))
+        else:
+            return redirect('orders')
+    
+@login_required
+def orders(request, template='orders.html'):
+    orders = Order.objects.filter(user=request.user)
+    template_params = {
+        'orders': orders,
+    }
+    return render_to_response(template, template_params, RequestContext(request))
+    
+@login_required
 def modify_cart(request):
     response = {}
     if request.is_ajax() and request.method == 'POST':

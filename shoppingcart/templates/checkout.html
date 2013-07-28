@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load extras %}
+
+{% block content %}
+<div id="checkout">
+    <h2 class="text-center">Your order was successfully placed</h2>
+    {% show_order new_order %}
+    <a href="{% url 'orders' %}" class="btn btn-primary pull-right">View all orders</a>
+</div>
+{% endblock %}

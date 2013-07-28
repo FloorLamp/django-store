@@ -1,0 +1,42 @@
+<div class="panel order">
+    <div class="panel-heading">
+        <h4 class="pull-left"><b>Order #{{ order.id }}</b></h4>
+        <h4 class="pull-right">Placed {{ order.date_ordered }}</h4>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-lg-9 col-offset-1">
+                    <h4>Product</h4>
+                </div>
+                <div class="col-lg-1 text-right">
+                    <h4>Count</h4>
+                </div>
+                <div class="col-lg-1 text-right">
+                    <h4>Price</h4>
+                </div>
+            </div>
+        </li>
+        {% for p in order.get_orders %}
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-lg-1 text-center">
+                    <img class="product-image" src="{{ p.product.image_url }}"/>
+                </div>
+                <div class="col-lg-9">
+                    <h4>{{ p.product.name }}</h4>
+                </div>
+                <div class="col-lg-1 text-right">
+                    <h4>{{ p.count }}</h4>
+                </div>
+                <div class="col-lg-1 text-right">
+                    <h4>${{ p.product.price|floatformat:"2" }}</h4>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+        <li class="list-group-item order-footer text-right">
+            <h4><b>Total:&nbsp;&nbsp;${{ order.get_price }}</b></h4>
+        </li>
+    </ul>
+</div>

@@ -32,6 +32,10 @@
 }
 
 
+#cart .list-group,
+.order .list-group {
+    margin-top: -16px;
+}
 #cart .product-image {
     max-width: 100%;
     max-height: 100px;
@@ -40,6 +44,14 @@
     margin-top: 15px;
     display: none;
 }
-#cart .panel-footer {
+.order .product-image {
+    max-width: 100%;
+    max-height: 50px;
+}
+.order-footer {
+    background-color: #f5f5f5;
+    overflow: auto;
+}
+.order .panel-heading {
     overflow: auto;
 }

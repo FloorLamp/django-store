@@ -16,6 +16,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_full_name }} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'cart' %}">Shopping Cart</a></li>
+                        <li><a href="{% url 'orders' %}">Past Orders</a></li>
                         <li class="divider"></li>
                         <li><a href="{% url 'logout_view' %}">Logout</a></li>
                     </ul>
