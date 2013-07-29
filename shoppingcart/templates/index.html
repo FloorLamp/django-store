@@ -23,6 +23,11 @@
             <img class="product-image" src="{{ p.image_url }}"/>
             <div>{{ p.description }}</div>
         </div>
+    {% empty %}
+        <div class="jumbotron">
+            <h2>There are no products yet.</h2>
+            <p>When there are products you will see them here!</p>
+        </div>
     {% endfor %}
     </div>
 </div>

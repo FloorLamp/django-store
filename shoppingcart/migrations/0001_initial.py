@@ -13,6 +13,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('price', self.gf('django.db.models.fields.DecimalField')(max_digits=15, decimal_places=2)),
+            ('quantity', self.gf('django.db.models.fields.IntegerField')()),
             ('image_url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
             ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
         ))
@@ -21,9 +22,9 @@ class Migration(SchemaMigration):
         # Adding model 'ShoppingCart'
         db.create_table(u'shoppingcart_shoppingcart', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('product', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shoppingcart.Product'])),
-            ('count', self.gf('django.db.models.fields.IntegerField')(default=1)),
+            ('count', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('date_added', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'shoppingcart', ['ShoppingCart'])
@@ -31,12 +32,19 @@ class Migration(SchemaMigration):
         # Adding model 'Order'
         db.create_table(u'shoppingcart_order', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('product', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shoppingcart.Product'])),
-            ('count', self.gf('django.db.models.fields.IntegerField')(default=1)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('date_ordered', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
         db.send_create_signal(u'shoppingcart', ['Order'])
+
+        # Adding model 'OrderProduct'
+        db.create_table(u'shoppingcart_orderproduct', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('order', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shoppingcart.Order'])),
+            ('product', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shoppingcart.Product'])),
+            ('count', self.gf('django.db.models.fields.IntegerField')()),
+        ))
+        db.send_create_signal(u'shoppingcart', ['OrderProduct'])
 
 
     def backwards(self, orm):
@@ -48,6 +56,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Order'
         db.delete_table(u'shoppingcart_order')
+
+        # Deleting model 'OrderProduct'
+        db.delete_table(u'shoppingcart_orderproduct')
 
 
     models = {
@@ -89,11 +100,16 @@ class Migration(SchemaMigration):
         },
         u'shoppingcart.order': {
             'Meta': {'object_name': 'Order'},
-            'count': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'date_ordered': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'product': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shoppingcart.Product']"}),
-            'user_id': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+        },
+        u'shoppingcart.orderproduct': {
+            'Meta': {'object_name': 'OrderProduct'},
+            'count': ('django.db.models.fields.IntegerField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'order': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shoppingcart.Order']"}),
+            'product': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shoppingcart.Product']"})
         },
         u'shoppingcart.product': {
             'Meta': {'object_name': 'Product'},
@@ -101,15 +117,16 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'price': ('django.db.models.fields.DecimalField', [], {'max_digits': '15', 'decimal_places': '2'})
+            'price': ('django.db.models.fields.DecimalField', [], {'max_digits': '15', 'decimal_places': '2'}),
+            'quantity': ('django.db.models.fields.IntegerField', [], {})
         },
         u'shoppingcart.shoppingcart': {
             'Meta': {'object_name': 'ShoppingCart'},
-            'count': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
+            'count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'date_added': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'product': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shoppingcart.Product']"}),
-            'user_id': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         }
     }
 
