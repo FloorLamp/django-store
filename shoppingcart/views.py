@@ -15,6 +15,7 @@ def home(request, template='index.html'):
     products = Product.objects.all()
     login_error = request.session.pop('login_error', None)
     template_params = {
+        'subdomain': request.subdomain,
         'products': products,
         'login_error': login_error,
     }
@@ -110,7 +111,7 @@ def modify_cart(request):
                 response['status'] = 'product unavailable'
                 return HttpResponse(json.dumps(response), mimetype='application/json')
             cart_product, created = ShoppingCart.objects.get_or_create(user=request.user, product=product)
-            cart_product.count += 1
+            cart_product.count = F('count') + 1
             cart_product.save()
             response['status'] = 'ok'
             response['product_quantity'] = Product.objects.get(id=request.POST['id']).quantity

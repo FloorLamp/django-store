@@ -15,13 +15,13 @@ class Product(models.Model):
     def in_stock(self):
         return self.quantity > 0
     
-    # use F object to change quantity atomically. Returns true if ok, false if negative quantity
+    # use F object to change quantity atomically. Returns true if successful
     def change_quantity(self, count):
-        if self.quantity + count < 0:
-            return False
+        if count < 0:
+            return Product.objects.filter(id=self.id, quantity__gte=-count).update(quantity=F('quantity')+count)
+        elif count > 0:
+            return Product.objects.filter(id=self.id).update(quantity=F('quantity')+count)
         else:
-            self.quantity = F('quantity') + count
-            self.save()
             return True
     
     def __unicode__(self):

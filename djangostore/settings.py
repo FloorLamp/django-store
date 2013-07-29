@@ -10,18 +10,21 @@ ADMINS = (
 MANAGERS = ADMINS
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+STORES = [l.strip() for l in open(ROOT_PATH + '/stores').readlines()]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': ROOT_PATH + 'db.sqlite3',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
-    }
+    store: {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '{}_{}.sqlite3'.format(ROOT_PATH, store),
+    } for store in STORES
 }
+DATABASES.update({
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '{}_default.sqlite3'.format(ROOT_PATH),
+    }
+})
+DATABASE_ROUTERS = ['shoppingcart.middleware.subdomain.DatabaseRouter']
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -95,21 +98,28 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'subdomains.middleware.SubdomainURLRoutingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'shoppingcart.middleware.subdomain.SubdomainMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'djangostore.urls'
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages'
+)
 
-SUBDOMAIN_URLCONFS = {
-    None: 'djangostore.urls'
-}
+ROOT_URLCONF = 'djangostore.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'djangostore.wsgi.application'
