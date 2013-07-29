@@ -105,14 +105,14 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'ordergroove.urls'
+ROOT_URLCONF = 'djangostore.urls'
 
 SUBDOMAIN_URLCONFS = {
-    None: 'ordergroove.urls'
+    None: 'djangostore.urls'
 }
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'ordergroove.wsgi.application'
+WSGI_APPLICATION = 'djangostore.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
