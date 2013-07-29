@@ -95,6 +95,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'subdomains.middleware.SubdomainURLRoutingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,6 +106,10 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'ordergroove.urls'
+
+SUBDOMAIN_URLCONFS = {
+    None: 'ordergroove.urls'
+}
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'ordergroove.wsgi.application'
