@@ -13,3 +13,7 @@
     $ ./manage.py migrate --database=store_name
     
   Now you can just visit store_name.yourstore.com.
+
+## Testing
+    
+    $ ./manage.py test shoppingcart
